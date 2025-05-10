@@ -1,11 +1,10 @@
-using System;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
     public Rigidbody2D BodyPlayer;
-    public float Speed = 30;
-    public SpriteRenderer spriteRenderer; // Drag your SpriteRenderer here in Inspector
+    [SerializeField] float Speed = 100;
+    public SpriteRenderer spriteRenderer; // Assign in Inspector
     public Animator anim;
 
     private float horizontalInput;
@@ -14,26 +13,24 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
-        anim = GetComponent<Animator>();
+        if (anim == null)
+            anim = GetComponent<Animator>();
     }
 
     void Update()
     {
-        Moving();
-    }
-
-    private void Moving()
-    {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
-        // Flip sprite based on horizontal movement
-        if (horizontalInput < 0)
-            spriteRenderer.flipX = false;
-        else if (horizontalInput > 0)
-            spriteRenderer.flipX = true;
+        // Determine if player is moving
+        bool isMoving = horizontalInput != 0 || verticalInput != 0;
+        anim.SetBool("Moving", isMoving);
 
-        anim.SetBool("Moving", true);
+        // Flip sprite only if horizontal movement
+        if (horizontalInput < 0)
+            spriteRenderer.flipX = true;
+        else if (horizontalInput > 0)
+            spriteRenderer.flipX = false;
     }
 
     private void FixedUpdate()
